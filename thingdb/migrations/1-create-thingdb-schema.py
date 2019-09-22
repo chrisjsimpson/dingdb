@@ -10,13 +10,13 @@ def up():
     cur.executescript(
         """
   CREATE TABLE IF NOT EXISTS thing (
-    id text,
+    id text UNIQUE,
     name text,
     kind_id text
   );
 
   CREATE TABLE IF NOT EXISTS version (
-    id text,
+    id text UNIQUE,
     thing_id text,
     creator text,
     creation_date text,
