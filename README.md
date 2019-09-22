@@ -16,19 +16,37 @@ Inspired by:
 
 ```
 git clone git@github.com:chrisjsimpson/thingdb.git
-pip3 install ./thingdb
-python3 ./thingdb/migrations/1-create-thingdb-schema.py -up -db /path/to/your/sqlite/database
+cd thingdb/
+pip3 install ./
+python3 thingdb/migrations/1-create-thingdb-schema.py -up -db ./data.db
 ```
 
 # Usage
 
 ```
-import thingdb
+from thingdb import thingdb
 from uuid import uuid4
 
 thingdb.help() # See help
 
 # Connect and insert data
 tdb = thingdb(database='./data.db')
-putThing(str(uuid4()), 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
+# Put things
+tdb.putThing(1, 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
+# Get a thing
+person = tdb.getThing(1)
+person.name 
+'Sam'
+person.age
+'30'
+person.age = 31
+person.save()
+
+# Get things by type
+tdb.getThingsByType('person')
+
+# More..
+
+# Use a uuid for ids:
+tdb.putThing(str(uuid4()), 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
 ```
