@@ -75,7 +75,7 @@ class thingdb():
     # Build things list
     things = {} #Dict
     for row in result:
-      currentId = int(row['id'])
+      currentId = row['id']
       if currentId not in things:
         things[currentId] = {}
       things[currentId]['kind'] = row['kind_id']
