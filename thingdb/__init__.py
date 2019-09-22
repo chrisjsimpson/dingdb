@@ -1,16 +1,5 @@
 import sqlite3
 
-class thing():
-  def __init__(self, rawThing):
-    self.thing = rawThing
-  
-  def load(self):
-    """Return thing object"""
-    return self.thing
-     
-  def save(self, thing):
-    """Persist latest thing to the database"""
-    pass
 
 class thingdb():
 
@@ -19,6 +8,22 @@ class thingdb():
     :args: database - full path to sqlite database
     """
     self.database = database
+
+  class thing():
+    def __init__(self, rawThing):
+      self.thing = rawThing
+    
+    def load(self):
+      """Return thing object"""
+      return self.thing
+
+    def save(self):
+      """Persist latest thing to the database"""
+      return "Not implemented yet"
+
+    def __getattr__(self, attribute):
+      return self.__dict__['thing']['data'][attribute]
+    
 
   def getdb(self):
     """Return database connection"""
@@ -61,7 +66,7 @@ class thingdb():
     for row in result:
       rawThing['data'][row['key']] = row['value']
     # Return thing
-    return thing(rawThing)
+    return self.thing(rawThing)
 
   def getThingsByType(self, kind_id):
     """Return list of things of a given type"""
