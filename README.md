@@ -19,3 +19,16 @@ git clone git@github.com:chrisjsimpson/thingdb.git
 pip3 install ./thingdb
 python3 ./thingdb/migrations/1-create-thingdb-schema.py -up -db /path/to/your/sqlite/database
 ```
+
+# Usage
+
+```
+import thingdb
+from uuid import uuid4
+
+thingdb.help() # See help
+
+# Connect and insert data
+tdb = thingdb(database='./data.db')
+putThing(str(uuid4()), 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
+```
