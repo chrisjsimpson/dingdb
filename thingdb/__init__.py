@@ -1,6 +1,5 @@
 import sqlite3
 
-
 class thingdb():
 
   def __init__(self, database='./data.db'):
@@ -9,21 +8,6 @@ class thingdb():
     """
     self.database = database
 
-  class thing():
-    def __init__(self, rawThing):
-      self.thing = rawThing
-    
-    def load(self):
-      """Return thing object"""
-      return self.thing
-
-    def save(self):
-      """Persist latest thing to the database"""
-      return "Not implemented yet"
-
-    def __getattr__(self, attribute):
-      return self.__dict__['thing']['data'][attribute]
-    
 
   def getdb(self):
     """Return database connection"""
@@ -66,7 +50,7 @@ class thingdb():
     for row in result:
       rawThing['data'][row['key']] = row['value']
     # Return thing
-    return self.thing(rawThing)
+    return thing(rawThing)
 
   def getThingsByType(self, kind_id):
     """Return list of things of a given type"""
@@ -137,3 +121,37 @@ class thingdb():
     DELETE FROM version WHERE thing_id = ?;
     """, (thing_id,))
     db.commit()
+
+class thing(thingdb):
+  def __init__(self, rawThing):
+    super().__init__()
+    self.thing = rawThing
+  
+  def load(self):
+    """Return thing object"""
+    return self.thing
+
+  def save(self):
+    """Persist latest thing to the database"""
+    # Refresh attributes - if an attribute never gets explicitly set, its not available
+      # TODO understand why we need to refesh them...
+    for key in self.thing['data'].keys():
+      try:
+        self.thing['data'][key] = self.__getattribute__(key) 
+      except AttributeError:
+        self.__setattr__(key, self.thing['data'][key])
+
+    for key in self.thing['data'].keys():
+      db = self.getdb()
+      c = db.cursor()
+      c.execute(
+      """
+      INSERT INTO data (thing_id, version_id, key, value)
+      VALUES (?, ?, ?, ?)
+      """,(self.thing['id'], 0, key, self.__getattribute__(key)))
+      db.commit()
+
+  def __getattr__(self, attribute):
+    return self.__dict__['thing']['data'][attribute]
+    
+
