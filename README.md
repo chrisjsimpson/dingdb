@@ -11,3 +11,11 @@ Inspired by:
 - https://www.reddit.com/r/webdev/comments/30ycc1/has_anyone_built_a_reddit_clone_if_so_any_tips_on/
   - http://www.reddit.com/r/webdev/.json
 - https://www.youtube.com/watch?v=hB-M8oH4K4w
+
+# Installation
+
+```
+git clone git@github.com:chrisjsimpson/thingdb.git
+pip3 install ./thingdb
+python3 ./thingdb/migrations/1-create-thingdb-schema.py -up -db /path/to/your/sqlite/database
+```
