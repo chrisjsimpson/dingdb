@@ -1,5 +1,17 @@
 import sqlite3
 
+class thing():
+  def __init__(self, rawThing):
+    self.thing = rawThing
+  
+  def load(self):
+    """Return thing object"""
+    return self.thing
+     
+  def save(self, thing):
+    """Persist latest thing to the database"""
+    pass
+
 class thingdb():
 
   def __init__(self, database='./data.db'):
@@ -39,17 +51,17 @@ class thingdb():
     """, (id,))
     result = c.fetchall()
     db.close()
-    # Build thing
-    thing = {
+    # Build a thing
+    rawThing = {
     'id': result[0]['id'],
     'kind': result[0]['kind_id'],
     'name': result[0]['name'],
     'data': {}
     }
     for row in result:
-      thing['data'][row['key']] = row['value']
+      rawThing['data'][row['key']] = row['value']
     # Return thing
-    return thing
+    return thing(rawThing)
 
   def getThingsByType(self, kind_id):
     """Return list of things of a given type"""
