@@ -16,7 +16,7 @@ def up():
   );
 
   CREATE TABLE IF NOT EXISTS version (
-    id text UNIQUE,
+    id text,
     thing_id text,
     creator text,
     creation_date text,
