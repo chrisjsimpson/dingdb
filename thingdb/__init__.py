@@ -1,111 +1,122 @@
 import sqlite3
 
-def help():
-  print("""Usage: 
-    - getThing(id)
-    - putThing(7, 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
-    - getThingsByType(kind_id)
-    
-  """)
+class thingdb():
 
-def getThing(id):
-  conn = sqlite3.connect('./data.db')
-  conn.row_factory = sqlite3.Row
-  c = conn.cursor()
-  c.execute(
-  """
-  SELECT DISTINCT
-  thing.id, thing.name, thing.kind_id,
-  data.version_id, data.key, data.value
-  from data
-   join version on 
-    data.thing_id = version.thing_id
-   join thing on
-    version.thing_id = thing.id
-  where data.thing_id = ?
-  """, (id,))
-  result = c.fetchall()
-  conn.close()
-  # Build thing
-  thing = {
-  'id': result[0]['id'],
-  'kind': result[0]['kind_id'],
-  'name': result[0]['name'],
-  'data': {}
-  }
-  for row in result:
-    thing['data'][row['key']] = row['value']
-  # Return thing
-  return thing
+  def __init__(self, database='./data.db'):
+    """Initalise connection
+    :args: database - full path to sqlite database
+    """
+    self.database = database
 
-def getThingsByType(kind_id):
-  """Return list of things of a given type"""
-  conn = sqlite3.connect('./data.db')
-  conn.row_factory = sqlite3.Row
-  c = conn.cursor()
-  c.execute(
+  def getdb(self):
+    """Return database connection"""
+    conn = sqlite3.connect(self.database)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+  def help():
+    print("""Usage: 
+      - getThing(id)
+      - putThing(7, 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
+      - getThingsByType(kind_id)
+      
+    """)
+
+  def getThing(self, id):
+    db = self.getdb()
+    c = db.cursor()
+    c.execute(
     """
     SELECT DISTINCT
     thing.id, thing.name, thing.kind_id,
     data.version_id, data.key, data.value
-    FROM data
-     JOIN version ON
+    from data
+     join version on 
       data.thing_id = version.thing_id
-     JOIN thing ON
+     join thing on
       version.thing_id = thing.id
-    WHERE thing.kind_id = ?
-    GROUP BY data.thing_id, data.key
-    ORDER BY thing.id
+    where data.thing_id = ?
+    """, (id,))
+    result = c.fetchall()
+    db.close()
+    # Build thing
+    thing = {
+    'id': result[0]['id'],
+    'kind': result[0]['kind_id'],
+    'name': result[0]['name'],
+    'data': {}
+    }
+    for row in result:
+      thing['data'][row['key']] = row['value']
+    # Return thing
+    return thing
 
-  """, (kind_id,))
-  result = c.fetchall()
-  conn.close()
-  # Build things list
-  things = {} #Dict
-  for row in result:
-    currentId = int(row['id'])
-    if currentId not in things:
-      things[currentId] = {}
-    things[currentId]['kind'] = row['kind_id']
-    if 'data' not in things[currentId]:
-      things[currentId]['data'] = {}
-    # Apply attributes
-    things[currentId]['data'][row['key']] = row['value']
- 
-  return things
+  def getThingsByType(self, kind_id):
+    """Return list of things of a given type"""
+    db = self.getdb()
+    c = db.cursor()
+    c.execute(
+      """
+      SELECT DISTINCT
+      thing.id, thing.name, thing.kind_id,
+      data.version_id, data.key, data.value
+      FROM data
+       JOIN version ON
+        data.thing_id = version.thing_id
+       JOIN thing ON
+        version.thing_id = thing.id
+      WHERE thing.kind_id = ?
+      GROUP BY data.thing_id, data.key
+      ORDER BY thing.id
 
-def putThing(thing_id, name, kind_id, data=None, creator=None, creation_date=None, comment=None):
-  conn = sqlite3.connect('./data.db')
-  c = conn.cursor()
-  
-  c.execute(
-  """
-  INSERT INTO thing (id, name, kind_id) VALUES (?, ?, ?)
-  """, (thing_id, name, kind_id))
+    """, (kind_id,))
+    result = c.fetchall()
+    db.close()
+    # Build things list
+    things = {} #Dict
+    for row in result:
+      currentId = int(row['id'])
+      if currentId not in things:
+        things[currentId] = {}
+      things[currentId]['kind'] = row['kind_id']
+      if 'data' not in things[currentId]:
+        things[currentId]['data'] = {}
+      # Apply attributes
+      things[currentId]['data'][row['key']] = row['value']
+   
+    return things
 
-  c.execute(
-  """
-  INSERT INTO version (id, thing_id, creator, creation_date,comment) VALUES (?, ?, ?, ?, ?)
-  """, (0, thing_id, creator, creation_date, comment))
-  
-  for attribute in data:
+  def putThing(self, thing_id, name, kind_id, data=None, creator=None, creation_date=None, comment=None):
+    db = self.getdb()
+    c = db.cursor()
     c.execute(
     """
-    INSERT INTO data (version_id, thing_id, key, value) VALUES(?, ?, ?, ?)
-    """, (0, thing_id, attribute['key'], attribute['value']))
-  # Commit all 
-  conn.commit()
+    INSERT INTO thing (id, name, kind_id) VALUES (?, ?, ?)
+    """, (thing_id, name, kind_id))
 
-def deleteThing(thing_id):
-  conn = sqlite3.connect('./data.db')
-  c = conn.cursor()
-  c.execute(
-  """
-  DELETE FROM thing WHERE id=?
-  """, (thing_id,))
+    c.execute(
+    """
+    INSERT INTO version (id, thing_id, creator, creation_date,comment) VALUES (?, ?, ?, ?, ?)
+    """, (0, thing_id, creator, creation_date, comment))
+    
+    for attribute in data:
+      c.execute(
+      """
+      INSERT INTO data (version_id, thing_id, key, value) VALUES(?, ?, ?, ?)
+      """, (0, thing_id, attribute['key'], attribute['value']))
+    # Commit all 
+    db.commit()
 
-  c.execute(
-  """ 
-  DELETE FROM version WHERE thing_id = ?;
-  """, (thing_id,))
-  conn.commit()
+  def deleteThing(self, thing_id):
+    db = self.getdb()
+    c = db.cursor()
+    c.execute(
+    """
+    DELETE FROM thing WHERE id=?
+    """, (thing_id,))
+
+    c.execute(
+    """ 
+    DELETE FROM version WHERE thing_id = ?;
+    """, (thing_id,))
+    db.commit()
