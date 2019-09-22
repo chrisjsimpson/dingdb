@@ -8,6 +8,7 @@ setuptools.setup(
     desciption="Python api for thingdb like storage and retrieval",
     packages=setuptools.find_packages(),
     include_package_data=True,
+    data_files=[('thingdb/migrations', ['thingdb/migrations/1-create-thingdb-schema.py'])],
     classifiers=(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Affero General Public License v3",
