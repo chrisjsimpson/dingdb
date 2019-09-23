@@ -9,7 +9,7 @@ def up():
     cur = con.cursor()
     cur.executescript(
         """
-  CREATE TABLE IF NOT EXISTS thing (
+  CREATE TABLE IF NOT EXISTS ding (
     id text UNIQUE,
     name text,
     kind_id text
@@ -17,14 +17,14 @@ def up():
 
   CREATE TABLE IF NOT EXISTS version (
     id text,
-    thing_id text,
+    ding_id text,
     creator text,
     creation_date text,
     comment text
   );
 
   CREATE TABLE IF NOT EXISTS data (
-    thing_id text,
+    ding_id text,
     version_id text,
     key text,
     value text
@@ -40,7 +40,7 @@ def down():
     cur = con.cursor()
     cur.executescript(
     """
-        DROP TABLE IF EXISTS thing;
+        DROP TABLE IF EXISTS ding;
         DROP TABLE IF EXISTS version;
         DROP TABLE IF EXISTS data;
     """

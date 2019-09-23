@@ -1,13 +1,13 @@
-# Thingdb
+# Dingdb, a thingdb like storage & retrieval Python API 
 
-Simple implementation of thingdb.
+Simple implementation of **Thingdb**, called **Dingdb** (German for *'thing'*)
 Currently expects a sqlite3 database.
 
 Inspired by: 
 
 - http://web.archive.org/web/20080109204022/http://pharos.infogami.com/tdb
-- https://github.com/reddit-archive/reddit/blob/master/r2/r2/lib/db/thing.py
-- https://github.com/itslukej/thing/tree/master/thingdb
+- https://github.com/reddit-archive/reddit/blob/master/r2/r2/lib/db/ding.py
+- https://github.com/itslukej/ding/tree/master/dingdb
 - https://www.reddit.com/r/webdev/comments/30ycc1/has_anyone_built_a_reddit_clone_if_so_any_tips_on/
   - http://www.reddit.com/r/webdev/.json
 - https://www.youtube.com/watch?v=hB-M8oH4K4w
@@ -15,26 +15,26 @@ Inspired by:
 # Installation
 
 ```
-git clone git@github.com:chrisjsimpson/thingdb.git
-cd thingdb/
+git clone git@github.com:chrisjsimpson/dingdb.git
+cd dingdb/
 pip3 install ./
-python3 thingdb/migrations/1-create-thingdb-schema.py -up -db ./data.db
+python3 dingdb/migrations/1-create-dingdb-schema.py -up -db ./data.db
 ```
 
 # Usage
 
 ```
-from thingdb import thingdb
+from dingdb import dingdb
 from uuid import uuid4
 
-thingdb.help() # See help
+dingdb.help() # See help
 
 # Connect and insert data
-tdb = thingdb(database='./data.db')
-# Put things
-tdb.putThing(1, 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
-# Get a thing
-person = tdb.getThing(1)
+tdb = dingdb(database='./data.db')
+# Put dings
+tdb.putDing(1, 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
+# Get a ding
+person = tdb.getDing(1)
 person.name 
 'Sam'
 person.age
@@ -42,11 +42,11 @@ person.age
 person.age = 31
 person.save()
 
-# Get things by type
-tdb.getThingsByType('person')
+# Get dings by type
+tdb.getDingsByType('person')
 
 # More..
 
 # Use a uuid for ids:
-tdb.putThing(str(uuid4()), 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
+tdb.putDing(str(uuid4()), 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
 ```

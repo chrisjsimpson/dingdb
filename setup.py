@@ -1,14 +1,14 @@
 import setuptools
 
 setuptools.setup(
-    name='thingdb',
+    name='dingdb',
     version="0.0.1",
     author="Chris Simpson",
     author_email="chris@karmacomputing.co.uk",
-    desciption="Python api for thingdb like storage and retrieval",
+    desciption="Dingdb is a Python api for thingdb like storage and retrieval",
     packages=setuptools.find_packages(),
     include_package_data=True,
-    data_files=[('thingdb/migrations', ['thingdb/migrations/1-create-thingdb-schema.py'])],
+    data_files=[('dingdb/migrations', ['dingdb/migrations/1-create-dingdb-schema.py'])],
     classifiers=(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Affero General Public License v3",
