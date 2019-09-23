@@ -31,9 +31,9 @@ dingdb.help() # See help
 
 # Connect and insert data
 tdb = dingdb(database='./data.db')
-# Put dings
+# Put things
 tdb.putDing(1, 'person', 'person', data=[{'key':'name', 'value': 'Sam'}, {'key':'age', 'value':30}])
-# Get a ding
+# Get a thing
 person = tdb.getDing(1)
 person.name 
 'Sam'
@@ -42,7 +42,7 @@ person.age
 person.age = 31
 person.save()
 
-# Get dings by type
+# Get things by type
 tdb.getDingsByType('person')
 
 # More..
